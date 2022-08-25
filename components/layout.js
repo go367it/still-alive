@@ -1,10 +1,5 @@
+const layout = ({ children }) => {
+  return <>{children}</>;
+};
 
-const layout = ({children}) => {
-  return (
-    <>
-      {children}
-    </>
-  )
-}
-
-export default layout
+export default layout;
