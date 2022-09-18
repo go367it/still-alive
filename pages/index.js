@@ -33,6 +33,23 @@ export default function Home() {
           />
         </div>
       </Container>
+
+      {/* Create Anonymous Link  */}
+      <div className="mt-6">
+        <hr />
+        <Container>
+          <div className="flex gap-6 py-6">
+            <input
+              placeholder="Shorten your link"
+              className="px-3 py-3 outline-none border border-gray-200 rounded-lg w-full text-gray-600"
+            />
+            <button className="bg-blue-600 px-10 py-3 rounded-lg text-white cursor-pointer hover:bg-blue-500 focus:ring focus:ring-blue-300 transform duration-300">
+              Shorten
+            </button>
+          </div>
+        </Container>
+        <hr />
+      </div>
     </div>
   );
 }
