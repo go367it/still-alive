@@ -1,5 +1,14 @@
+import Navbar from "./Navbar.js/Navbar";
+import Footer from "./Footer/Footer";
+
 const Layout = ({ children }) => {
-  return <>{children}</>;
+  return (
+    <>
+      <Navbar />
+      {children}
+      <Footer />
+    </>
+  );
 };
 
 export default Layout;
