@@ -55,7 +55,7 @@ export default function Home() {
           );
 
           setAnonymousLinks([...anonymousLinks, reqData]); // updating the state
-          cogoToast.success('Link shortened !')
+          cogoToast.success("Link shortened !");
           setLink(""); // clearing out the previuos link inside the input box
           console.log(anonymousLinks);
         })
