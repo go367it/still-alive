@@ -1,38 +1,76 @@
+import { useEffect, useState } from "react";
 import Head from "next/head";
 import Container from "../components/uiComponents/Container";
 import Image from "next/image";
 import axios from "axios";
-import { useState } from "react";
+import cogoToast from "cogo-toast";
+
+// icons
+import { ClipboardDocumentIcon } from "@heroicons/react/24/outline";
 
 export default function Home() {
   const [link, setLink] = useState(""); // for storing the state of input box
   const [anonymousLinks, setAnonymousLinks] = useState([]); // anonymous links which are not stored in the databasae
 
+  useEffect(() => {
+    // checking for local storage and if not there then create a new one
+    if (localStorage.getItem("anonymousLinks")) {
+      console.log(
+        JSON.parse(localStorage.getItem("anonymousLinks")),
+        "local useEff"
+      );
+      // updating the state of anonymousLinks which are stored in local storage
+      setAnonymousLinks(JSON.parse(localStorage.getItem("anonymousLinks")));
+    } else {
+      // creating the local storage if the storage is not already present
+      localStorage.setItem("anonymousLinks", JSON.stringify([]));
+    }
+  }, []);
+
   // function
   // for creating anonymous link
   const createAnonymousLink = () => {
-    const config = {
-      url: "https://chota.ninja/urls/anonymous/shortner",
-      method: "post",
-      data: {
-        redirects_to: `${link}`,
-      },
-    };
-    axios(config)
-      .then((res) => {
-        console.log(res.data);
-        const reqData = {
-          shortenedLink: res.data.data.shortenedLink,
-          actualLink: res.data.data.actualLink,
-          id: res.data.data.id
-        };
+    if (link != "") {
+      // config for sending to the server
+      const config = {
+        url: "https://chota.ninja/urls/anonymous/shortner",
+        method: "post",
+        data: {
+          redirects_to: `${link}`,
+        },
+      };
+      // calling the api to create anonymous links
+      axios(config)
+        .then((res) => {
+          console.log(res.data);
+          const reqData = {
+            shortenedLink: res.data.data.shortenedLink,
+            actualLink: res.data.data.actualLink,
+            id: res.data.data.id,
+          };
 
-        setAnonymousLinks([...anonymousLinks, reqData]);
-        console.log(anonymousLinks);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+          localStorage.setItem(
+            "anonymousLinks",
+            JSON.stringify([...anonymousLinks, reqData])
+          );
+
+          setAnonymousLinks([...anonymousLinks, reqData]); // updating the state
+          setLink(""); // clearing out the previuos link inside the input box
+          console.log(anonymousLinks);
+        })
+        .catch((err) => {
+          console.log(err);
+          cogoToast.error("Error !");
+        });
+    } else {
+      cogoToast.error("Please Enter Link !");
+    }
+  };
+
+  // function for copying to clipboard
+  const copyToClipboard = (text) => {
+    navigator.clipboard.writeText(text);
+    cogoToast.success("Copied !");
   };
 
   return (
@@ -67,14 +105,15 @@ export default function Home() {
       </Container>
 
       {/* Create Anonymous Link  */}
-      <div className="mt-6">
+      <div className="mt-6 bg-[#FED81D]">
         <hr />
         <Container>
+          {/* link input section  */}
           <div className="create-link flex gap-6 py-6">
             <input
               value={link}
               placeholder="Shorten your link"
-              className="px-3 py-3 outline-none border border-gray-200 rounded-lg w-full text-gray-600"
+              className="px-3 py-3 outline-none rounded-lg w-full text-gray-600"
               onChange={(e) => setLink(e.target.value)}
             />
             <button
@@ -87,12 +126,24 @@ export default function Home() {
           </div>
 
           {anonymousLinks.length > 0 ? (
-            <div className="link-contianer my-6 divide-y rounded-lg border border-gray-300">
+            <div className="link-contianer bg-white my-6 divide-y rounded-lg">
               {anonymousLinks.map((element) => {
                 return (
-                  <div key={element.id} className="link-holder px-4 py-6  flex justify-between place-items-center">
+                  <div
+                    key={element.id}
+                    className="link-holder px-4 py-6  flex justify-between place-items-center"
+                  >
                     <p className=" max-w-xs truncate">{element.actualLink}</p>
-                    <p className="text-blue-600">{element.shortenedLink}</p>
+                    <div className="flex justify-center place-items-center gap-6">
+                      <p className="text-blue-600">{element.shortenedLink}</p>
+                      <button
+                        onClick={() => copyToClipboard(element.shortenedLink)}
+                        className="bg-blue-600 px-3 py-2 rounded-lg text-white cursor-pointer hover:bg-blue-500 focus:ring 
+                      focus:ring-blue-300 transform duration-300"
+                      >
+                        <ClipboardDocumentIcon className="h-5 w-5" />
+                      </button>
+                    </div>
                   </div>
                 );
               })}
