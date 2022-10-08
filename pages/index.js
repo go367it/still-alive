@@ -1,8 +1,40 @@
 import Head from "next/head";
 import Container from "../components/uiComponents/Container";
 import Image from "next/image";
+import axios from "axios";
+import { useState } from "react";
 
 export default function Home() {
+  const [link, setLink] = useState(""); // for storing the state of input box
+  const [anonymousLinks, setAnonymousLinks] = useState([]); // anonymous links which are not stored in the databasae
+
+  // function
+  // for creating anonymous link
+  const createAnonymousLink = () => {
+    const config = {
+      url: "https://chota.ninja/urls/anonymous/shortner",
+      method: "post",
+      data: {
+        redirects_to: `${link}`,
+      },
+    };
+    axios(config)
+      .then((res) => {
+        console.log(res.data);
+        const reqData = {
+          shortenedLink: res.data.data.shortenedLink,
+          actualLink: res.data.data.actualLink,
+          id: res.data.data.id
+        };
+
+        setAnonymousLinks([...anonymousLinks, reqData]);
+        console.log(anonymousLinks);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
   return (
     <div>
       <Head>
@@ -38,15 +70,36 @@ export default function Home() {
       <div className="mt-6">
         <hr />
         <Container>
-          <div className="flex gap-6 py-6">
+          <div className="create-link flex gap-6 py-6">
             <input
+              value={link}
               placeholder="Shorten your link"
               className="px-3 py-3 outline-none border border-gray-200 rounded-lg w-full text-gray-600"
+              onChange={(e) => setLink(e.target.value)}
             />
-            <button className="bg-blue-600 px-10 py-3 rounded-lg text-white cursor-pointer hover:bg-blue-500 focus:ring focus:ring-blue-300 transform duration-300">
+            <button
+              onClick={() => createAnonymousLink()}
+              className="bg-blue-600 px-10 py-3 rounded-lg text-white cursor-pointer hover:bg-blue-500 focus:ring 
+              focus:ring-blue-300 transform duration-300"
+            >
               Shorten
             </button>
           </div>
+
+          {anonymousLinks.length > 0 ? (
+            <div className="link-contianer my-6 divide-y rounded-lg border border-gray-300">
+              {anonymousLinks.map((element) => {
+                return (
+                  <div key={element.id} className="link-holder px-4 py-6  flex justify-between place-items-center">
+                    <p className=" max-w-xs truncate">{element.actualLink}</p>
+                    <p className="text-blue-600">{element.shortenedLink}</p>
+                  </div>
+                );
+              })}
+            </div>
+          ) : (
+            ""
+          )}
         </Container>
         <hr />
       </div>
