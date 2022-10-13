@@ -27,6 +27,13 @@ export default function Home() {
     }
   }, []);
 
+  // for checking the web token for authentication
+  useEffect(() => {
+    if (localStorage.getItem("token")) {
+      console.log(localStorage.getItem("token"));
+    }
+  }, []);
+
   // function
   // for creating anonymous link
   const createAnonymousLink = () => {
