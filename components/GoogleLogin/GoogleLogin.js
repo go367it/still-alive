@@ -17,6 +17,7 @@ export default function LoginGoogle() {
 
         // Save the JWT inside a cookie
         localStorage.setItem("token", token);
+        console.log(res.data)
 
         window.location.href = "/";
       })
