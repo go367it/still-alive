@@ -4,6 +4,7 @@ import Container from "../components/uiComponents/Container";
 import Image from "next/image";
 import axios from "axios";
 import cogoToast from "cogo-toast";
+import LoginChecker from "../components/LoginChecker/loginChecker";
 
 // icons
 import { ClipboardDocumentIcon } from "@heroicons/react/24/outline";
@@ -29,6 +30,7 @@ export default function Home() {
 
   // for checking the web token for authentication
   useEffect(() => {
+    LoginChecker()
     if (localStorage.getItem("token")) {
       console.log(localStorage.getItem("token"));
     }

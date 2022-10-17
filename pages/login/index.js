@@ -1,8 +1,15 @@
-import { useState } from "react";
+import { useEffect } from "react";
 import Container from "../../components/uiComponents/Container";
 import LoginGoogle from "../../components/GoogleLogin/GoogleLogin";
+import LoginChecker from "../../components/LoginChecker/loginChecker";
 
 export default function Login() {
+
+  useEffect(()=>{
+    // checking for token
+    LoginChecker();
+  },[])
+
   return (
     <div>
       <Container>
