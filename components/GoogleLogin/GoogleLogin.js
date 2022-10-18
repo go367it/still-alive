@@ -17,18 +17,18 @@ export default function LoginGoogle() {
 
         // Save the JWT inside a cookie
         localStorage.setItem("token", token);
-        console.log(res.data)
+        console.log(res.data);
 
-        window.location.href = "/";
+        window.location.href = "/Dashboard";
       })
       .catch((err) => {
         // throw new Error(err);
-        console.log(err)
+        console.log(err);
       });
   };
   const onGoogleFailure = (err) => {
     //  console.log(err,99900909);
-    console.log(err)
+    console.log(err);
   };
 
   return (

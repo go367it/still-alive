@@ -1,42 +1,59 @@
 import Container from "../../components/uiComponents/Container";
 import { useEffect } from "react";
 import axios from "axios";
-import cogoToast from 'cogo-toast'
+import cogoToast from "cogo-toast";
 
-// function for syncing urls 
+// function for syncing urls
 // from localstorage to cloud
-const syncLocalUrls = () => {
+const syncLocalUrls = (urls) => {
+  cogoToast.loading("Syncing local urls!");
+};
 
-    cogoToast.loading('Syncing Urls!')
+// getting links from cloud
+const getCloudLinks = () => {
+  cogoToast.loading("Loading ...");
 
-}
+  // config for calling the api
+  const config = {
+    url: "https://chota.ninja/urls/mylinks",
+    method: "get",
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
+    },
+  };
+
+  // calling the api for getting the links
+  axios(config)
+    .then((res) => {
+      console.log(res.data.data);
+      return res.data.data;
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+};
 
 export default function Dashboard() {
-
-    // function when 
+  // function when
   useEffect(() => {
+    // checking if webtoken is present or not
+    if (localStorage.getItem("token")) {
+      // checking if local urls are there or not
+      if (localStorage.getItem("anonymousLinks")) {
+        // calling and storing the anonymous links
+        const anonymousLinks = JSON.parse(
+          localStorage.getItem("anonymousLinks")
+        );
+        (async () => {
+          await syncLocalUrls(anonymousLinks);
+          const data = getCloudLinks();
+        })();
 
-    cogoToast.loading('Loading ...')
-
-    console.log(JSON.parse( localStorage.getItem('anonymousLinks')))
-    // config for calling the api
-    const config = {
-      url: "https://chota.ninja/urls/mylinks",
-      method: "get",
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
-      },
-    };
-
-    // calling the api for getting the links
-    axios(config)
-      .then((res) => {
-        console.log(res.data);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-      console.log('test')
+        return () => {};
+      }
+    } else {
+      window.location = "/login";
+    }
   }, []);
 
   return (
