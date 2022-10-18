@@ -7,6 +7,30 @@ import cogoToast from "cogo-toast";
 // from localstorage to cloud
 const syncLocalUrls = (urls) => {
   cogoToast.loading("Syncing local urls!");
+  console.log(urls)
+
+  const config = {
+    url: "https://chota.ninja/urls/syncUserurls",
+    method: "get",
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
+    },
+    data: {
+      url_id: ``
+    }
+  };
+
+  urls.forEach(element => {
+    config.data.url_id = element.id
+    axios(config)
+    .then(res=>{
+      console.log(res)
+    })
+    .catch(err=>{
+      console.log(err)
+    })
+  });
+
 };
 
 // getting links from cloud
@@ -46,7 +70,7 @@ export default function Dashboard() {
         );
         (async () => {
           await syncLocalUrls(anonymousLinks);
-          const data = getCloudLinks();
+          // const data = await getCloudLinks();
         })();
 
         return () => {};
