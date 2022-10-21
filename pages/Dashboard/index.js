@@ -1,17 +1,15 @@
 import Container from "../../components/uiComponents/Container";
 import { useEffect } from "react";
 import axios from "axios";
-import cogoToast from "cogo-toast";
 
 // function for syncing urls
 // from localstorage to cloud
 const syncLocalUrls = (urls) => {
-  cogoToast.loading("Syncing local urls!");
   console.log(urls)
 
   const config = {
     url: "https://chota.ninja/urls/syncUserurls",
-    method: "get",
+    method: "post",
     headers: {
       Authorization: `Bearer ${localStorage.getItem("token")}`,
     },
@@ -35,7 +33,6 @@ const syncLocalUrls = (urls) => {
 
 // getting links from cloud
 const getCloudLinks = () => {
-  cogoToast.loading("Loading ...");
 
   // config for calling the api
   const config = {
@@ -70,10 +67,13 @@ export default function Dashboard() {
         );
         (async () => {
           await syncLocalUrls(anonymousLinks);
-          // const data = await getCloudLinks();
+          localStorage.removeItem('anonymousLinks')
+          const data = await getCloudLinks();
         })();
 
         return () => {};
+      }else{
+        getCloudLinks()
       }
     } else {
       window.location = "/login";

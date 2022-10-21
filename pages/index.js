@@ -3,7 +3,6 @@ import Head from "next/head";
 import Container from "../components/uiComponents/Container";
 import Image from "next/image";
 import axios from "axios";
-import cogoToast from "cogo-toast";
 import LoginChecker from "../components/LoginChecker/loginChecker";
 
 // icons
@@ -64,23 +63,22 @@ export default function Home() {
           );
 
           setAnonymousLinks([...anonymousLinks, reqData]); // updating the state
-          cogoToast.success("Link shortened !");
           setLink(""); // clearing out the previuos link inside the input box
           console.log(anonymousLinks);
         })
         .catch((err) => {
           console.log(err);
-          cogoToast.error("Error !");
         });
     } else {
-      cogoToast.error("Please Enter Link !");
+      // cogoToast.error("Please Enter Link !");
+      console.log()
     }
   };
 
   // function for copying to clipboard
   const copyToClipboard = (text) => {
     navigator.clipboard.writeText(text);
-    cogoToast.success("Copied !");
+    // cogoToast.success("Copied !");
   };
 
   return (
