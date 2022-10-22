@@ -1,58 +1,9 @@
 import Container from "../../components/uiComponents/Container";
 import { useEffect } from "react";
-import axios from "axios";
-
-// function for syncing urls
-// from localstorage to cloud
-const syncLocalUrls = (urls) => {
-  console.log(urls)
-
-  const config = {
-    url: "https://chota.ninja/urls/syncUserurls",
-    method: "post",
-    headers: {
-      Authorization: `Bearer ${localStorage.getItem("token")}`,
-    },
-    data: {
-      url_id: ``
-    }
-  };
-
-  urls.forEach(element => {
-    config.data.url_id = element.id
-    axios(config)
-    .then(res=>{
-      console.log(res)
-    })
-    .catch(err=>{
-      console.log(err)
-    })
-  });
-
-};
-
-// getting links from cloud
-const getCloudLinks = () => {
-
-  // config for calling the api
-  const config = {
-    url: "https://chota.ninja/urls/mylinks",
-    method: "get",
-    headers: {
-      Authorization: `Bearer ${localStorage.getItem("token")}`,
-    },
-  };
-
-  // calling the api for getting the links
-  axios(config)
-    .then((res) => {
-      console.log(res.data.data);
-      return res.data.data;
-    })
-    .catch((err) => {
-      console.log(err);
-    });
-};
+// import axios from "axios";
+import { toast } from "react-toastify";
+import syncLocalUrls from "../../middleWare/syncLocalUrls";
+import getCloudLinks from "../../middleWare/getCloudLinks";
 
 export default function Dashboard() {
   // function when
@@ -67,13 +18,14 @@ export default function Dashboard() {
         );
         (async () => {
           await syncLocalUrls(anonymousLinks);
-          localStorage.removeItem('anonymousLinks')
+          localStorage.removeItem("anonymousLinks");
+          toast.success("Sync successfull");
           const data = await getCloudLinks();
         })();
 
         return () => {};
-      }else{
-        getCloudLinks()
+      } else {
+        getCloudLinks();
       }
     } else {
       window.location = "/login";
