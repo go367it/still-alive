@@ -16,18 +16,20 @@ export default function Dashboard() {
         const anonymousLinks = JSON.parse(
           localStorage.getItem("anonymousLinks")
         );
+        // syncing local urls to cloud
         (async () => {
-          await syncLocalUrls(anonymousLinks);
-          localStorage.removeItem("anonymousLinks");
+          await syncLocalUrls(anonymousLinks); // calling api for syncing local urls
+          localStorage.removeItem("anonymousLinks"); // clearing localStorage
           toast.success("Sync successfull");
-          const data = await getCloudLinks();
+          const data = await getCloudLinks(); // calling api for cloud urls
         })();
 
         return () => {};
       } else {
-        getCloudLinks();
+        getCloudLinks(); // calling api for cloud urls
       }
     } else {
+      // changing the location if the token is not present
       window.location = "/login";
     }
   }, []);
